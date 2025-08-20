@@ -4,6 +4,8 @@ import (
 	"log"
 	"os"
 	"shortener/internal/config"
+	"shortener/internal/lib/logger/sl"
+	"shortener/internal/storage/sqlite"
 
 	"github.com/joho/godotenv"
 )
@@ -26,6 +28,14 @@ func main() {
 
 	log.Info("starting shortener", slog.String("env", cfg.Env))
 	log.Debug("debug enabled")
+
+	storage, err := sqlite.New(cfg.StoragePath)
+	if err != nil {
+		log.Error("failed to open storage", sl.Err(err))
+		os.Exit(1)
+	}
+
+	_ = storage
 }
 
 func setupLogger(env string) *slog.Logger {
